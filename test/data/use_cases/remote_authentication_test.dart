@@ -135,4 +135,23 @@ void main() {
     // Assert
     expect(account.accessToken, accessToken);
   });
+
+  test(
+      'Should throw InvalidCredentials Error if HttpClient returns 200 with invalid data',
+      () async {
+    // AAT - Arrange, Act, Assert
+    // Arrange
+    when(
+      () => httpClientSpy.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+      ),
+    ).thenAnswer((_) async => {'invalid_key': 'invalid_value'});
+
+    // Act
+    final future = sut.auth(params);
+    // Assert
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
