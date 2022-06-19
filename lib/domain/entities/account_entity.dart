@@ -1,8 +1,5 @@
 class AccountEntity {
-  final String token;
+  final String accessToken;
 
-  AccountEntity(this.token);
-
-  factory AccountEntity.fromJson(Map<String, dynamic> json) =>
-      AccountEntity(json['accessToken']);
+  AccountEntity(this.accessToken);
 }
