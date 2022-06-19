@@ -31,6 +31,9 @@ generated_plugin_registrant.dart
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.idea/
+# If you're building an application, you may want to check-in your pubspec.lock
+pubspec.lock
 
 .project
 .classpath
