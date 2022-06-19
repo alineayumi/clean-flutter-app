@@ -15,4 +15,4 @@
 > ## Exception - Server failure
 1. ✅ The system returns an error message
 > ## Exception - Invalid credentials
-1. The system returns an error message informing that the credentials are wrong
+1. ✅ The system returns an error message informing that the credentials are wrong
