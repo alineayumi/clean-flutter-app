@@ -4,7 +4,7 @@ import 'package:clean_flutter_app/domain/entities/entities.dart';
 import 'package:clean_flutter_app/domain/helpers/helpers.dart';
 import 'package:clean_flutter_app/domain/use_cases/use_cases.dart';
 
-class RemoteAuthentication {
+class RemoteAuthentication implements Authentication {
   final HttpClient httpClient;
   final String url;
 
@@ -13,6 +13,7 @@ class RemoteAuthentication {
     required this.url,
   });
 
+  @override
   Future<AccountEntity> auth(AuthenticationParams params) async {
     try {
       final Map<String, dynamic> response = await httpClient.request(
