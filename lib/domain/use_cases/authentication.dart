@@ -1,8 +1,7 @@
-import 'package:clean_flutter_app/data/use_cases/use_cases.dart';
 import 'package:clean_flutter_app/domain/entities/entities.dart';
 
 abstract class Authentication {
-  Future<AccountEntity> auth(RemoteAuthenticationParams params);
+  Future<AccountEntity> auth(AuthenticationParams params);
 }
 
 class AuthenticationParams {
