@@ -1,5 +1,6 @@
 import 'package:clean_flutter_app/data/http/http.dart';
 import 'package:clean_flutter_app/data/use_cases/use_cases.dart';
+import 'package:clean_flutter_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_app/domain/helpers/helpers.dart';
 import 'package:clean_flutter_app/domain/use_cases/use_cases.dart';
 import 'package:faker/faker.dart';
@@ -18,7 +19,8 @@ void main() {
     // Arrange
     httpClientSpy = HttpClientSpy();
     url = faker.internet.httpUrl();
-    sut = RemoteAuthentication(httpClient: httpClientSpy, url: url); // system under test
+    sut = RemoteAuthentication(
+        httpClient: httpClientSpy, url: url); // system under test
     params = AuthenticationParams(
       email: faker.internet.email(),
       password: faker.internet.password(),
@@ -34,7 +36,8 @@ void main() {
         method: 'post',
         body: {'email': params.email, 'password': params.password},
       ),
-    ).thenAnswer((_) async => true);
+    ).thenAnswer((_) async =>
+        {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
 
     await sut.auth(params);
     // Assert
@@ -96,7 +99,8 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-  test('Should throw InvalidCredentials Error if HttpClient returns 401', () async {
+  test('Should throw InvalidCredentials Error if HttpClient returns 401',
+      () async {
     // AAT - Arrange, Act, Assert
     // Arrange
     when(
@@ -111,5 +115,24 @@ void main() {
     final future = sut.auth(params);
     // Assert
     expect(future, throwsA(DomainError.invalidCredentials));
+  });
+
+  test('Should return an Account if HttpClient returns 200', () async {
+    // AAT - Arrange, Act, Assert
+    // Arrange
+    final String accessToken = faker.guid.guid();
+    final String name = faker.person.name();
+    when(
+      () => httpClientSpy.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+      ),
+    ).thenAnswer((_) async => {'accessToken': accessToken, 'name': name});
+
+    // Act
+    final AccountEntity account = await sut.auth(params);
+    // Assert
+    expect(account.token, accessToken);
   });
 }
