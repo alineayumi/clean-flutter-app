@@ -9,7 +9,7 @@
 > ## Exception - Invalid URL
 1. The system returns an error message
 > ## Exception - Invalid data
-1. The system returns an error message
+1. ✅ The system returns an error message
 > ## Exception - Invalid answer
 1. The system returns an error message
 > ## Exception - Server failure
