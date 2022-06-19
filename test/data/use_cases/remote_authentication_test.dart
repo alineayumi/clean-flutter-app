@@ -133,6 +133,6 @@ void main() {
     // Act
     final AccountEntity account = await sut.auth(params);
     // Assert
-    expect(account.token, accessToken);
+    expect(account.accessToken, accessToken);
   });
 }
