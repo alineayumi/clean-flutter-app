@@ -7,7 +7,7 @@ Scenario: Valid credentials
 Given the customer has given valid credentials
 When she or he tries to login
 Then the system will send the user to the survey screen
-And will mantain the user logged in
+And will maintain the user logged in
 
 Scenario: Invalid credentials
 Given the customer has given invalid credentials
