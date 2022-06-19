@@ -15,6 +15,24 @@ void main() {
   late String url;
   late AuthenticationParams params;
 
+  Map<String, dynamic> mockValidData() =>
+      {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+
+  When mockRequest() => when(
+        () => httpClientSpy.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        ),
+      );
+  void mockHttpData(Map<String, dynamic> data) {
+    mockRequest().thenAnswer((_) async => data);
+  }
+
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
+  }
+
   setUp(() {
     // Arrange
     httpClientSpy = HttpClientSpy();
@@ -25,6 +43,7 @@ void main() {
       email: faker.internet.email(),
       password: faker.internet.password(),
     );
+    mockHttpData(mockValidData());
   });
 
   test('Should call http client with correct values', () async {
@@ -51,14 +70,7 @@ void main() {
   test('Should throw Unexpected Error if HttpClient returns 400', () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenThrow(HttpError.badRequest);
-
+    mockHttpError(HttpError.badRequest);
     // Act
     final future = sut.auth(params);
     // Assert
@@ -68,14 +80,7 @@ void main() {
   test('Should throw Unexpected Error if HttpClient returns 404', () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenThrow(HttpError.notFound);
-
+    mockHttpError(HttpError.notFound);
     // Act
     final future = sut.auth(params);
     // Assert
@@ -85,14 +90,7 @@ void main() {
   test('Should throw Unexpected Error if HttpClient returns 500', () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenThrow(HttpError.serverError);
-
+    mockHttpError(HttpError.serverError);
     // Act
     final future = sut.auth(params);
     // Assert
@@ -103,14 +101,7 @@ void main() {
       () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenThrow(HttpError.unauthorized);
-
+    mockHttpError(HttpError.unauthorized);
     // Act
     final future = sut.auth(params);
     // Assert
@@ -120,20 +111,12 @@ void main() {
   test('Should return an Account if HttpClient returns 200', () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    final String accessToken = faker.guid.guid();
-    final String name = faker.person.name();
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenAnswer((_) async => {'accessToken': accessToken, 'name': name});
-
+    final Map<String, dynamic> validData = mockValidData();
+    mockHttpData(validData);
     // Act
     final AccountEntity account = await sut.auth(params);
     // Assert
-    expect(account.accessToken, accessToken);
+    expect(account.accessToken, validData['accessToken']);
   });
 
   test(
@@ -141,14 +124,7 @@ void main() {
       () async {
     // AAT - Arrange, Act, Assert
     // Arrange
-    when(
-      () => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ),
-    ).thenAnswer((_) async => {'invalid_key': 'invalid_value'});
-
+    mockHttpData({'invalid_key': 'invalid_value'});
     // Act
     final future = sut.auth(params);
     // Assert
